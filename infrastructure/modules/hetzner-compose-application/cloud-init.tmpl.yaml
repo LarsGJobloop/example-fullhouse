@@ -1,0 +1,18 @@
+#cloud-config
+
+runcmd:
+  # Log rendered configuration to journal
+  - |
+    echo "======================================================"
+    echo "Compose Application Server setup started"
+    echo "  Repository URL: ${git_repository_url}"
+    echo "  Repository Branch: ${git_repository_branch}"
+    echo "  Compose File Path: ${compose_file_path}"
+    echo "  Reconciliation Interval: ${reconciliation_interval}"
+    echo "======================================================"
+
+  # Log end of setup to journal
+  - |
+    echo "==========================================="
+    echo "Compose Application Server setup completed"
+    echo "==========================================="

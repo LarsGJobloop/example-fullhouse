@@ -1,0 +1,7 @@
+name: fullhouse
+
+services:
+  hello-web:
+    image: nginx:latest
+    ports:
+      - 80:80

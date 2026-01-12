@@ -1,18 +1,75 @@
 #cloud-config
 
-runcmd:
-  # Log rendered configuration to journal
-  - |
-    echo "======================================================"
-    echo "Compose Application Server setup started"
-    echo "  Repository URL: ${git_repository_url}"
-    echo "  Repository Branch: ${git_repository_branch}"
-    echo "  Compose File Path: ${compose_file_path}"
-    echo "  Reconciliation Interval: ${reconciliation_interval}"
-    echo "======================================================"
+packages:
+  - git
+  - curl
+  - ca-certificates
 
-  # Log end of setup to journal
-  - |
-    echo "==========================================="
-    echo "Compose Application Server setup completed"
-    echo "==========================================="
+write_files:
+  # Initialize Compose Host
+  - path: /usr/local/bin/initialize-compose-host.sh
+    permissions: 0755
+    encoding: b64
+    content: ${initialize_compose_host_base64}
+
+  - path: /etc/systemd/system/initialize-compose-host.service
+    permissions: 0644
+    content: |
+      [Unit]
+      Description=Initialize Compose Host
+      After=network-online.target
+      Wants=network-online.target
+      ConditionPathExists=!/var/lib/compose-host.initialized
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/initialize-compose-host.sh
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+
+  # Reconcile Compose Application
+  - path: /usr/local/bin/reconcile-compose-deployment.sh
+    permissions: 0755
+    encoding: b64
+    content: ${reconcile_compose_application_base64}
+
+  - path: /etc/systemd/system/reconcile-compose-deployment.service
+    permissions: 0644
+    content: |
+      [Unit]
+      Description=Reconcile Compose Deployment
+      After=initialize-compose-host.service docker.service
+      Requires=initialize-compose-host.service docker.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/reconcile-compose-deployment.sh
+
+  - path: /etc/systemd/system/reconcile-compose-deployment.timer
+    permissions: 0644
+    content: |
+      [Unit]
+      Description=Periodic Reconciliation of Compose Deployment
+
+      [Timer]
+      OnBootSec=30s
+      OnUnitActiveSec=30s
+      AccuracySec=10s
+
+      [Install]
+      WantedBy=timers.target
+
+runcmd:
+  # Reload systemd
+  - systemctl daemon-reexec
+  - systemctl daemon-reload
+
+  # Enable and start initilzation
+  - systemctl enable initialize-compose-host.service
+  - systemctl start initialize-compose-host.service
+
+  # Enable and start reconciliation
+  - systemctl enable reconcile-compose-deployment.timer
+  - systemctl start reconcile-compose-deployment.timer

@@ -1,0 +1,61 @@
+<type>: <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+
+# Normative types:
+#   decision(contest)     - Propose a revision to value heuristics
+#   decision(bind)        - Make a proposed value heuristic binding
+#
+# Operational types:
+#   align(thesis)         - Formulate a thesis for aligning better with some set of value heuristics
+#   align(specification)  - Create an executable ATDD specification from a thesis
+#   align(implementation) - Implement an ATDD specification
+#   align(reflection)     - Reflect on the validity of the thesis and its observed outcomes
+#
+# Epistemic types:
+#   document(<persona>)   - Update recorded knowledge for an audience
+#                           Examples: knowledge(developer), knowledge(operator), knowledge(consumer)
+#                           Format: As a <role>, I believe <audience> will find <diff> alleviates <painpoint>
+#
+# Miscellaneous types:
+#   refactor              - Restructure without changing observable outcomes
+#   chore                 - Maintenance tasks, setup, or scaffolding (use refactor for code changes)
+#   misc                  - Escape-hatch for changes that don't fit other categories (requires explanation)
+#
+# Subject line rules:
+#   - Maximum 50 characters
+#   - Use imperative mode ("Add registrtion spec" not "Added registration spec")
+#   - No period at the end
+#   - Capitalize first letter (unless starting with proper noun/acronym)
+#   - Remember this is the envelope, the commit diff is **the message**, so don't repeat yourself in the subject line.
+#
+# Body rules:
+#   - Mandatory
+#   - Note what, explain why, **don't** recount how
+#   - Wrap at 72 characters
+#   - Use blank lines to separate paragraphs
+#   - Keep paragraphs short and concise
+#   - Use bullet points to list items
+#   - Remember this is the envelope, the commit diff is **the message**, so don't repeat yourself in the body.
+#
+# Footer rules:
+#   - For align(thesis): Reference one or more canonicalized value heuristics with
+#       "Refs: decision(accep) <commit-hash>" or "See: decision(accep) <commit-hash>"
+#   - For align(specification): Reference thesis with
+#       "Refs: align(thes) <commit-hash>" or "See: align(thes) <commit-hash>"
+#   - For align(implementation): Reference specification with
+#       "Refs: align(spec) <commit-hash>" or "See: align(spec) <commit-hash>"
+#   - For align(reflection): Reference thesis with
+#       "Refs: align(thes) <commit-hash>"
+#   - For decision(contest): Reference original decision with
+#       "Refs: decision(accep) <commit-hash>" or name a prevously uncontested heuristic
+#   - For decision(accept): Reference proposal with
+#       "Refs: decision(propo) <commit-hash>"
+#   - Use blank lines to separate multiple footer entries
+#   - Optional for other types
+#
+# Architectural Reflection:
+# This is cheap under high alignment, and increasingly expensive under heterogeneous conditions.
+# This is a signal to act, not noise. Re-align, fork or pay the due.

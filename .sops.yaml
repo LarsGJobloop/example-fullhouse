@@ -7,3 +7,13 @@ creation_rules:
     key_groups:
       - age:
           - *admin
+  # Production secrets
+  - path_regex: ^infrastructure/environments/production/secrets.yaml$
+    key_groups:
+      - age:
+          - *admin
+  # Server admin key
+  - path_regex: ^infrastructure/environments/production/admin-key$
+    key_groups:
+      - age:
+          - *admin

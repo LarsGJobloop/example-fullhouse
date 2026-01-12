@@ -1,0 +1,3 @@
+# Ignore caches and artefacts
+obj
+bin

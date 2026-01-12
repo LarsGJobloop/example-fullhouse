@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /App
+
+# Copy everything
+COPY . ./
+# Restore as distinct layers
+RUN dotnet restore
+# Build and publish a release
+RUN dotnet publish src/document-service --configuration Release --output out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS document-service
+WORKDIR /App
+COPY --from=build /App/out .
+
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "DocumentService.dll"]

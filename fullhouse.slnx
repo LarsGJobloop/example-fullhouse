@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/document-service/">
+    <Project Path="src/document-service/DocumentService.csproj" />
+  </Folder>
+</Solution>

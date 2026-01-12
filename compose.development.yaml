@@ -1,0 +1,16 @@
+name: fullhouse-development
+
+services:
+  landing-page:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./src/landing-page:/usr/share/nginx/html:ro
+
+  document-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.asp-dotnet
+    ports:
+      - 8080:8080

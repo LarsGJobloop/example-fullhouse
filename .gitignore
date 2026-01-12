@@ -3,3 +3,7 @@
 *.tfvars
 *.tfstate
 *.tfstate.backup
+
+# .NET files
+bin
+obj

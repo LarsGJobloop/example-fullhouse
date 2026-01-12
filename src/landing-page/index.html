@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary Meta Tags -->
+  <title>FullHouse Platform</title>
+  <meta name="description"
+    content="Reference implementation of a strictly governed C# API. A mini project demonstrating modern infrastructure and deployment practices using Hetzner, Docker Compose, .NET, PostgreSQL, and more.">
+  <meta name="keywords"
+    content="C#, API, .NET, Docker Compose, Hetzner, Infrastructure as Code, IaC, PostgreSQL, Traefik, Zitadel, OpenFGA, MinIO, Cloud Init, SystemD">
+  <meta name="author" content="LarsGJobloop">
+  <meta name="theme-color" content="#f59e0b">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/LarsGJobloop/example-fullhouse">
+  <meta property="og:title" content="FullHouse Platform">
+  <meta property="og:description"
+    content="Reference implementation of a strictly governed C# API. A mini project demonstrating modern infrastructure and deployment practices.">
+  <meta property="og:site_name" content="FullHouse Platform">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://github.com/LarsGJobloop/example-fullhouse">
+
+  <!-- Stylesheets -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen">
+  <div class="container mx-auto px-4 py-16">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1 class="text-6xl font-bold text-amber-900 mb-4">
+          FullHouse Platform
+        </h1>
+        <p class="text-xl text-amber-800">
+          Reference implementation of a strictly governed C# API
+        </p>
+      </div>
+
+      <!-- About Section -->
+      <section class="glass rounded-2xl p-8 mb-8 shadow-xl">
+        <h2 class="text-3xl font-bold text-amber-900 mb-6">About This Example Project</h2>
+        <p class="text-amber-900 text-lg mb-4">
+          FullHouse is a mini project demonstrating how to host a strictly governed C# API
+          using modern infrastructure and deployment practices.
+        </p>
+        <div class="grid md:grid-cols-2 gap-6 mt-6">
+          <div class="glass-strong rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-amber-900 mb-3">Infrastructure</h3>
+            <ul class="text-amber-800 space-y-2">
+              <li>• Hetzner as Datacenter provider</li>
+              <li>• Infrastructure as Code (IaC)</li>
+              <li>• Cloud Init for server configuration</li>
+              <li>• SystemD for server runtime</li>
+              <li>• Docker Compose for application composition</li>
+            </ul>
+          </div>
+          <div class="glass-strong rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-amber-900 mb-3">Technology Stack</h3>
+            <ul class="text-amber-800 space-y-2">
+              <li>• .NET for application development</li>
+              <li>• PostgreSQL for data modelling</li>
+              <li>• Traefik as domain ingress</li>
+              <li>• Zitadel as Identity solution</li>
+              <li>• OpenFGA for policy modelling</li>
+              <li>• MinIO for object storage</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reference Section -->
+      <section class="glass rounded-2xl p-8 mb-8 shadow-xl">
+        <h2 class="text-3xl font-bold text-amber-900 mb-6">Reference</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="glass-strong rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-amber-900 mb-3">Repository</h3>
+            <p class="text-amber-800">
+              <a href="https://github.com/LarsGJobloop/example-fullhouse" target="_blank" rel="noopener noreferrer"
+                class="text-amber-600 hover:text-amber-800 underline font-mono break-all">
+                github.com/LarsGJobloop/example-fullhouse
+              </a>
+            </p>
+          </div>
+          <div class="glass-strong rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-amber-900 mb-3">Deployment</h3>
+            <p class="text-amber-800 mb-2">
+              <strong>Status:</strong> <span class="text-green-600">Active</span>
+            </p>
+            <p class="text-amber-800 mb-2">
+              <strong>Reconciliation:</strong> Every 30 seconds
+            </p>
+            <p class="text-amber-800">
+              <strong>Server:</strong> Hetzner Cloud (Helsinki)
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="glass rounded-2xl p-6 mt-8 shadow-xl">
+        <div class="grid md:grid-cols-3 gap-6 text-sm mb-6">
+          <div>
+            <h4 class="font-semibold text-amber-900 mb-2">Repository</h4>
+            <p class="text-amber-800 font-mono text-xs break-all">
+              <a href="https://github.com/LarsGJobloop/example-fullhouse" target="_blank" rel="noopener noreferrer"
+                class="text-amber-600 hover:text-amber-800 underline">
+                github.com/LarsGJobloop/example-fullhouse
+              </a>
+            </p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-amber-900 mb-2">Branch</h4>
+            <p class="text-amber-800 font-mono">main</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-amber-900 mb-2">Compose File</h4>
+            <p class="text-amber-800 font-mono">compose.yaml</p>
+          </div>
+        </div>
+        <p class="text-center text-amber-700 text-xs pt-6 border-t border-amber-300/30">
+          Deployed with Docker Compose on Hetzner Cloud •
+          Automated infrastructure deployment platform
+        </p>
+      </footer>
+    </div>
+  </div>
+</body>
+
+</html>

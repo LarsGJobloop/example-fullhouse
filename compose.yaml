@@ -5,3 +5,5 @@ services:
     image: nginx:latest
     ports:
       - 80:80
+    volumes:
+      - ./src/landing-page:/usr/share/nginx/html:ro

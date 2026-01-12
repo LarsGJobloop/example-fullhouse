@@ -36,7 +36,7 @@ Service implemented for a resource.
   - CLI for working the API
   - OCI and CLI published to GitHub Container and Package Registry
 
-### v1.0 - 
+### v1.0 - Steering Development
 
 Governance overlay implmented.
 

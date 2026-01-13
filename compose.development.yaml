@@ -14,3 +14,16 @@ services:
       dockerfile: Dockerfile.asp-dotnet
     ports:
       - 8080:8080
+
+  database:
+    image: postgres:17
+    ports:
+      - 5432:5432
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+volumes:
+  database-data:

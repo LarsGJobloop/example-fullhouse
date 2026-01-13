@@ -13,8 +13,188 @@ services:
       context: .
       dockerfile: Dockerfile.asp-dotnet
     ports:
-      - 8080:8080
+      - 8001:8080
 
+  # =============================
+  # = !!! Platform Services !!! =
+  # =============================
+  # Services down here are those you will likely buy from a SaaS provider.
+
+  # Identity Provider
+  # -----------------
+  # Zitadel is an open-source identity and access management solution.
+  # It allows you to manage users, groups, and permissions for your application.
+  # This can be done either through an UI or through a API (IaC).
+  # See: https://zitadel.com/docs/intro
+  # We are using the multi-phase initialization process to control the database creation and migration.
+  # Steps:
+  # 1. Creates the Zitadel database, service user and base tables
+  # 2. Creates the derived tables and initializes the login client
+  # 3. Starts service the Zitadel API and Login UI
+  zitadel-init:
+    restart: no
+    image: ghcr.io/zitadel/zitadel:v4.9.0
+    command: init
+    environment:
+      # Database connection settings.
+      ZITADEL_DATABASE_POSTGRES_HOST: database
+      ZITADEL_DATABASE_POSTGRES_PORT: 5432
+      # Database to use for Zitadel.
+      ZITADEL_DATABASE_POSTGRES_DATABASE: zitadel
+      # Database admin credentials.
+      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: postgres
+      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: postgres
+      ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE: disable
+      # Credentials for Zitadel service user.
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: disable
+
+    healthcheck:
+      test:
+        - CMD
+        - /app/zitadel
+        - ready
+      interval: 10s
+      timeout: 60s
+      retries: 5
+    volumes:
+      - ./tmp:/current-dir:delegated
+    ports:
+      - 8080:8080
+      - 3000:3000
+    networks:
+      - zitadel
+    depends_on:
+      database:
+        condition: service_healthy
+
+  zitadel-setup:
+    restart: no
+    image: ghcr.io/zitadel/zitadel:v4.9.0
+    command: setup --masterkey "MasterkeyNeedsToHave32Characters"
+    environment:
+      # See "What's next" to learn about how to serve Zitadel on a different domain or IP.
+      ZITADEL_EXTERNALDOMAIN: localhost
+
+      # See "What's next" to learn about how to enable TLS.
+      ZITADEL_EXTERNALSECURE: false
+      ZITADEL_TLS_ENABLED: false
+
+      # Database connection settings.
+      ZITADEL_DATABASE_POSTGRES_HOST: database
+      ZITADEL_DATABASE_POSTGRES_PORT: 5432
+      ZITADEL_DATABASE_POSTGRES_DATABASE: zitadel
+      # Credentials for Zitadel service user.
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: disable
+
+      # By configuring a login client, the setup job creates a user of type machine with the role IAM_LOGIN_CLIENT.
+      # It writes a PAT to the path specified in ZITADEL_FIRSTINSTANCE_LOGINCLIENTPATPATH.
+      # The PAT is passed to the login container via the environment variable ZITADEL_SERVICE_USER_TOKEN_FILE.
+      ZITADEL_FIRSTINSTANCE_LOGINCLIENTPATPATH: /current-dir/login-client.pat
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORDCHANGEREQUIRED: false
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_MACHINE_USERNAME: login-client
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_MACHINE_NAME: Automatically Initialized IAM_LOGIN_CLIENT
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_PAT_EXPIRATIONDATE: "2029-01-01T00:00:00Z"
+
+      # Configure the login v2 features.
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED: true
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_BASEURI: http://localhost:3000/ui/v2/login
+      ZITADEL_OIDC_DEFAULTLOGINURLV2: http://localhost:3000/ui/v2/login/login?authRequest=
+      ZITADEL_OIDC_DEFAULTLOGOUTURLV2: http://localhost:3000/ui/v2/login/logout?post_logout_redirect=
+      ZITADEL_SAML_DEFAULTLOGINURLV2: http://localhost:3000/ui/v2/login/login?samlRequest=
+
+    healthcheck:
+      test:
+        - CMD
+        - /app/zitadel
+        - ready
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+    user: "0"
+    volumes:
+      - ./tmp:/current-dir:delegated
+    ports:
+      - 8080:8080
+      - 3000:3000
+    networks:
+      - zitadel
+    depends_on:
+      zitadel-init:
+        condition: service_completed_successfully
+      database:
+        condition: service_healthy
+
+  zitadel:
+    restart: no
+    image: ghcr.io/zitadel/zitadel:v4.9.0
+    command: start --masterkey "MasterkeyNeedsToHave32Characters"
+    environment:
+      # See "What's next" to learn about how to serve Zitadel on a different domain or IP.
+      ZITADEL_EXTERNALDOMAIN: localhost
+
+      # See "What's next" to learn about how to enable TLS.
+      ZITADEL_EXTERNALSECURE: false
+      ZITADEL_TLS_ENABLED: false
+
+      # Database connection settings.
+      ZITADEL_DATABASE_POSTGRES_HOST: database
+      ZITADEL_DATABASE_POSTGRES_PORT: 5432
+      ZITADEL_DATABASE_POSTGRES_DATABASE: zitadel
+      # The zitadel user is created by the init job if it does not exist.
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: disable
+
+    healthcheck:
+      test:
+        - CMD
+        - /app/zitadel
+        - ready
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+    user: "0"
+    volumes:
+      - ./tmp:/current-dir:delegated
+    ports:
+      - 8080:8080
+      - 3000:3000
+    networks:
+      - zitadel
+    depends_on:
+      zitadel-setup:
+        condition: service_completed_successfully
+      database:
+        condition: service_healthy
+
+  login:
+    restart: unless-stopped
+    image: ghcr.io/zitadel/zitadel-login:latest
+    # If you can't use the network_mode service:zitadel, you can pass the environment variables ZITADEL_API_URL=http://zitadel:8080 and CUSTOM_REQUEST_HEADERS=Host:localhost instead.
+    environment:
+      - ZITADEL_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_BASE_PATH=/ui/v2/login
+      - ZITADEL_SERVICE_USER_TOKEN_FILE=/current-dir/login-client.pat
+    network_mode: service:zitadel
+    user: "0"
+    volumes:
+      - ./tmp:/current-dir:delegated
+    depends_on:
+      zitadel:
+        condition: service_healthy
+        restart: false
+
+  # Database
+  # ---------
+  # PostgreSQL is an open-source relational database management system.
+  # It allows you to create databases, tables, and store and query data using a SQL language.
+  # See: https://www.postgresql.org/
   database:
     image: postgres:17
     ports:
@@ -24,6 +204,17 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - zitadel
 
 volumes:
   database-data:
+
+networks:
+  zitadel:

@@ -7,3 +7,6 @@
 # .NET files
 bin
 obj
+
+# Miscellaneous files
+tmp

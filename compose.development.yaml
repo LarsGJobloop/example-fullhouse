@@ -60,9 +60,6 @@ services:
       retries: 5
     volumes:
       - ./tmp:/current-dir:delegated
-    ports:
-      - 8080:8080
-      - 3000:3000
     networks:
       - zitadel
     depends_on:
@@ -115,12 +112,8 @@ services:
       timeout: 60s
       retries: 5
       start_period: 10s
-    user: "0"
     volumes:
       - ./tmp:/current-dir:delegated
-    ports:
-      - 8080:8080
-      - 3000:3000
     networks:
       - zitadel
     depends_on:
@@ -145,10 +138,20 @@ services:
       ZITADEL_DATABASE_POSTGRES_HOST: database
       ZITADEL_DATABASE_POSTGRES_PORT: 5432
       ZITADEL_DATABASE_POSTGRES_DATABASE: zitadel
-      # The zitadel user is created by the init job if it does not exist.
+      # Zitadel service user credentials.
       ZITADEL_DATABASE_POSTGRES_USER_USERNAME: zitadel
       ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: zitadel
       ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: disable
+
+      # SMTP Configuration
+      ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_HOST: mailpit:1025
+      ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_USER: user
+      ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_PASSWORD: password
+      ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_TLS: false
+      ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_FROM: "no-reply@localhost"
+      ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_FROMNAME: "No Reply"
+      ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_REPLYTOADDRESS: "no-reply@localhost"
+      ZITADEL_DEFAULTINSTANCE_DOMAINPOLICY_SMTPSENDERADDRESSMATCHESINSTANCEDOMAIN: false
 
     healthcheck:
       test:
@@ -159,7 +162,6 @@ services:
       timeout: 60s
       retries: 5
       start_period: 10s
-    user: "0"
     volumes:
       - ./tmp:/current-dir:delegated
     ports:
@@ -210,6 +212,22 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      - zitadel
+
+  # SMTP Sink
+  # ---------
+  # Mailpit is a local SMTP sink for testing email sending.
+  # Zitadel requires Email verification for account creation.
+  # See: https://github.com/axllent/mailpit
+  mailpit:
+    image: axllent/mailpit:latest
+    environment:
+      MP_SMTP_AUTH: "user:password"
+      MP_SMTP_AUTH_ALLOW_INSECURE: true
+    ports:
+      - "1025:1025"
+      - "8025:8025"
     networks:
       - zitadel
 

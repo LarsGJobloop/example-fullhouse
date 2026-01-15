@@ -8,7 +8,7 @@ using var loggerFactory = LoggerFactory.Create(builder =>
 {
   builder
     .AddConsole()
-    .SetMinimumLevel(LogLevel.Warning);
+    .SetMinimumLevel(LogLevel.Information);
 });
 var logger = loggerFactory.CreateLogger<Program>();
 
@@ -34,6 +34,8 @@ response.EnsureSuccessStatusCode();
 var responseContent = await Utilities.PrettifyJsonAsync(response.Content);
 logger.LogInformation("Response: {Response}", responseContent);
 
+// Print token
+logger.LogInformation(oauthClientFactory.GetToken());
 
 
 /// <summary>

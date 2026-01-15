@@ -190,6 +190,11 @@ public class OAuthClientFactory
     }
   }
 
+  public string GetToken()
+  {
+    return _tokenResponse?.AccessToken ?? throw new Exception("Login first!");
+  }
+
   /// <summary>
   /// Pretty prints a JSON element
   /// </summary>

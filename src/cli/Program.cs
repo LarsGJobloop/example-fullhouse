@@ -15,7 +15,7 @@ var logger = loggerFactory.CreateLogger<Program>();
 // Set up the OAuth client
 var oauthClientFactory = new OAuthClientFactory(new OAuthClientFactoryOptions
 {
-  ClientId = "355432348197677828",
+  ClientId = "355629494930863364",
   AuthorizationUrl = new Uri("http://localhost:8080/oauth/v2/device_authorization"),
   TokenUrl = new Uri("http://localhost:8080/oauth/v2/token"),
 }, loggerFactory.CreateLogger<OAuthClientFactory>());
